@@ -40,7 +40,7 @@ Currently HBase supports setting access controls at the table or column family l
 
 Audit messages from various Hadoop components do not use a unified or even consistently formatted format. This makes analysis of logs for verifying compliance or taking corrective action difficult. We will build a common audit logging facility as part of the common authorization framework work. We will also build a set of common audit log processing tools for transforming them to different industry standard formats, for supporting compliance verification, and for triggering responses to policy violations.
 
-#### Contributions:
+#### Current JIRAs:
 
 As part of this ongoing effort we are contributing our work to-date against the jiras listed below. As you may appreciate, the goals for Project Rhino covers a number of different Apache projects, the scope of work is significant and likely to only increase as we get additional community input. We also appreciate that there may be others in the Apache community that may be working on some of this or are interested in contributing to it. If so, we look forward to partnering with you in Apache to accelerate this effort so the Apache community can see the benefits from our collective efforts sooner.
 
