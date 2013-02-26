@@ -44,7 +44,7 @@ Audit messages from various Hadoop components do not use a unified or even consi
 
 As part of this ongoing effort we are contributing our work to-date against the jiras listed below. As you may appreciate, the goals for Project Rhino covers a number of different Apache projects, the scope of work is significant and likely to only increase as we get additional community input. We also appreciate that there may be others in the Apache community that may be working on some of this or are interested in contributing to it. If so, we look forward to partnering with you in Apache to accelerate this effort so the Apache community can see the benefits from our collective efforts sooner.
 
-Please feel free to reach out to us by commenting on the jiras below:
+Please feel free to reach out to us by commenting on the JIRAs below:
 
 [HBASE-6222: Add per-KeyValue Security](https://issues.apache.org/jira/browse/hbase-6222)
  
@@ -56,7 +56,7 @@ We extend the compression codec to a crypto codec framework to support encryptio
  
 We also provide a splittable AES codec implementation that supports encryption and decryption of data with Advanced Encryption Standard (AES), a specification for the encryption of electronic data used worldwide.  Further more, the performance of AES codec was optimized by using AES-NI instructions.  For AESCodec, we extend the SplittableCryptoCodec to support encryption. Our goal is adding a splittable crypto codec framework and a fast encryption algorithm through AES-NI, with minimal changes to core code. Compression can be done before encryption. The encrypted file is splittable and the blocks can be stored in different data nodes. For SimpleAESCodec, we extend the CryptoCodec to support encryption, compared to AESCodec, SimpleAESCodec doesn't support splittable and can't be used together with compression, and its encryption block header is much smaller.
 
-[MAPREDUCE-5025: Key Distribution and Management for supporting crypto codec in Map Reduce](https://issues.apache.org/jira/browse/mapreduce-5025) and related jiras
+[MAPREDUCE-5025: Key Distribution and Management for supporting crypto codec in Map Reduce](https://issues.apache.org/jira/browse/mapreduce-5025) and related JIRAs
 
 The work here enables MapReduce to utilize the Crypto Codec framework to support encryption and decryption of data during MapReduce jobs. [HADOOP-9331: Hadoop crypto codec framework and crypto codec implementations](https://issues.apache.org/jira/browse/hadoop-9331) introduces crypto codec support in the framework level for pluggable crypto codec implementations and provides basic facilities of key context resolving.  While encryption and decryption of files in a MapReduce job usually have a lot of requirements, we collect and implement the common requirements according to the real use cases and discussions from the community on [MAPREDUCE-4491: Encryption and Key Protection](https://issues.apache.org/jira/browse/MAPREDUCE-4491) and other list discussions. These requirements include:
 -	Support that different stages (input, output, intermediate output) should have the flexibility to choose whether encrypt or not, as well as which crypto codec to use
