@@ -81,3 +81,15 @@ We introduce transparent encryption for HFiles and the WAL, work that builds on 
 [ZOOKEEPER-1688: Transparent encryption of on-disk files](https://issues.apache.org/jira/browse/ZOOKEEPER-1688)
 
 We introduce optional transparent encryption of snapshots and commit logs on disk. The goal is to protect against the leakage of sensitive information from files at rest, due to accidental misconfiguration of filesystem permissions, improper decommissioning, or improper disk disposal. This change would introduce a new ServerConfig option that allows the administrator to select the desired persistence implementation by classname, and new persistence classes extending the File* classes that wrap current formats in encrypted containers. Otherwise and by default the current File* classes will be used without change. If enabled, transparent encryption of all on disk structures will be accomplished with a shared cluster key made available to the quorum peers via the Java Keystore (supporting various store options, including hardware security module integration). A new utility for offline key rotation will also be provided.
+
+[PIG-3289: Encryption aware load and store functions](https://issues.apache.org/jira/browse/PIG-3289)
+
+With HADOOP-9331 and MAPREDUCE-5025 in place, MapReduce jobs have the ability to process and output the encrypted data. For pig users, to take advantage of this capability and process and output the encrypted data, pig should have capability to accept the key and pass it to the MapReduce , so that MapReduce can do the job on the behalf of pig. The scope of this Jira is limited to passing the key to MapReduce and takes the advantage of HADOOP-9331 and MAPREDUCE-5025 without breaking Pig.
+To achieve that, file input formats or file output formats interface will be modified to handle CryptoCodec and set the context properly and provide key facilities.
+The file [input/output] formats that does not support compression (by using CompressionCodec) can't be addressed by this work because the encryption feature (HADOOP-9331 and related) is based on CompressionCodec.
+By making this change, pig can cover the following use case:
+a. Pig user can run a query on an encrypted data
+b. Pig users can store an encrypted data 
+c. Outputting the encrypted data
+Accessing of encrypted HBase storage/tables or any other encrypted storage format, who pig can query, should be addressed with separate Jiras, if needed because HBase | Other systems might have specific key management mechanisms or interfacing with Pig.
+To handle versions of Hadoop that do not have crypto support, we can avoid compilation problems by segregating crypto API usage into separate files to be included only if a flag is defined on the Ant command line (something like –Dcrypto).
