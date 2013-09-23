@@ -116,4 +116,17 @@ Avro file format is widely used in Hadoop. As data security is getting more and 
 Similar to compression and decompression, encryption and decryption can be implemented with Codecs, a concept that already exists in Avro. However, Avro Codec context handling needs to be extended to support per-codec contexts, such as encryption keys, for encryption and decryption.
 Avro supports multiple language implementations. This is an umbrella JIRA for this work and the implementation work for each language will be addressed in sub tasks.
 
+[HDFS-5143: Hadoop cryptographic file system](https://issues.apache.org/jira/browse/HDFS-5143)
 
+There is an increasing need for securing data when Hadoop customers use various upper layer applications, such as Map-Reduce, Hive, Pig, HBase and so on.
+
+HADOOP CFS (HADOOP Cryptographic File System) is used to secure data, based on HADOOP FilterFileSystem decorating DFS or other file systems, and transparent to upper layer applications. It is configurable, scalable and fast.
+
+High level requirements:
+1. Transparent to and no modification required for upper layer applications.
+2. Seek, PositionedReadable are supported for input stream of CFS if the wrapped file system supports them.
+3. Very high performance for encryption and decryption, they will not become bottleneck.
+4. Can decorate HDFS and all other file systems in Hadoop, and will not modify existing structure of file system, such as namenode and datanode structure if the wrapped file system is HDFS.
+5. Admin can configure encryption policies, such as which directory will be encrypted.
+6. A robust key management framework.
+7. Support Pread and append operations if the wrapped file system supports them.
