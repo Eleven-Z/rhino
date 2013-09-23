@@ -130,3 +130,45 @@ High level requirements:
 5. Admin can configure encryption policies, such as which directory will be encrypted.
 6. A robust key management framework.
 7. Support Pread and append operations if the wrapped file system supports them.
+
+[HADOOP-9134: Unified server side user groups mapping service](https://issues.apache.org/jira/browse/HADOOP-9134)
+
+This proposes to provide/expose the server side user group mapping service in NameNode to clients so that user group mapping can be kept in the single place and thus unified in all nodes and clients.
+
+[HADOOP-8943: Support multiple group mapping providers](https://issues.apache.org/jira/browse/HADOOP-8943)
+
+Discussed with Natty about LdapGroupMapping, we need to improve it so that:
+1. It's possible to do different group mapping for different users/principals. For example, AD user should go to LdapGroupMapping service for group, but service principals such as hdfs, mapred can still use the default one ShellBasedUnixGroupsMapping;
+2. Multiple ADs can be supported to do LdapGroupMapping;
+3. It's possible to configure what kind of users/principals (regarding domain/realm is an option) should use which group mapping service/mechanism.
+4. It's possible to configure and combine multiple existing mapping providers without writing codes implementing new one.
+
+[HADOOP-9477: posixGroups support for LDAP groups mapping service](https://issues.apache.org/jira/browse/HADOOP-9477)
+
+It would be nice to support posixGroups for LdapGroupsMapping service. Below is from current description for the provider:
+hadoop.security.group.mapping.ldap.search.filter.group:
+An additional filter to use when searching for LDAP groups. This should be
+changed when resolving groups against a non-Active Directory installation.
+posixGroups are currently not a supported group class.
+
+[ZOOKEEPER-1749: Login outside of Zookeeper client](https://issues.apache.org/jira/browse/ZOOKEEPER-1749)
+
+This proposes to allow Zookeeper client to reuse login credentials and subject from outside, avoiding redundant logins and related configurations for services that utilizes Zookeeper.
+
+[OOZIE-1376: Extending Oozie ACLs like admin groups and proxy users to support both groups and users](https://issues.apache.org/jira/browse/OOZIE-1376)
+
+Currently Oozie relevant ACLs supports only users in some case or only groups in other case, which is not consistent with other components like Hadoop, HBase and Hive. Supporting both users and groups in ACLs can simplify the admin configuration work, and also help implement more advanced access control such as RBAC based on the ACLs scheme. For example RBAC can simply translate role privilege into corresponding ACLs with the users and groups assigned to the role.
+
+[OOZIE-1232: GroupsService should be able to reference Hadoop configurations in Hadoop configuration folder](https://issues.apache.org/jira/browse/OOZIE-1232)
+
+Oozie GroupsService wraps Hadoop user groups mapping to get groups for user, which requires to reference Hadoop configurations, especially the properties related to groups mapping provider (such as LdapGroupsMapping).
+To avoid replication of such configurations into oozie-site.xml, mechanism is needed to configure the Hadoop configurations folder (often mentioned hadoop-conf) for the service, as HadoopAccessorService currently does.
+Such work can be done per Service, as HadoopAccessorService, but would it be better to avoid code changes or similar work when other Service also needs to do that in future.
+
+[HBASE-7524: hbase-policy.xml is improperly set thus all rules in it can be by-passed](https://issues.apache.org/jira/browse/HBASE-7524)
+
+This resolved an service level authorization policy issue.
+
+[HBASE-9570: With AccessDeniedException, HBase shell would be better to just display the error message to be user friendly](https://issues.apache.org/jira/browse/HBASE-9570)
+
+This improved HBase shell about exception reporting when access denied due to ACL.
