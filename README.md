@@ -167,8 +167,13 @@ Such work can be done per Service, as HadoopAccessorService, but would it be bet
 
 [HBASE-7524: hbase-policy.xml is improperly set thus all rules in it can be by-passed](https://issues.apache.org/jira/browse/HBASE-7524)
 
-This resolved an service level authorization policy issue.
+This resolved a service level authorization policy issue.
 
 [HBASE-9570: With AccessDeniedException, HBase shell would be better to just display the error message to be user friendly](https://issues.apache.org/jira/browse/HBASE-9570)
 
 This improved HBase shell about exception reporting when access denied due to ACL.
+
+
+[HADOOP-9125: LdapGroupsMapping threw CommunicationException after some idle time](https://issues.apache.org/jira/browse/HADOOP-9125)
+
+This resolved an issue found in LdapGrouspMapping provider.
