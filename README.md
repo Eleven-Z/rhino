@@ -16,9 +16,9 @@ The core of the Apache Hadoop ecosystem as it is commonly understood is:
 -	Flume: Collection and import of log and event data
 -	Sqoop: Imports data from relational databases
 
-These components are all separate projects and therefore cross cutting concerns like authN, authZ, a consistent security policy framework, consistent authorization model and audit coverage loosely coordinated. Some security features expected by our customers, such as encryption, are simply missing. Our aim is to take a full stack view and work with the individual projects toward consistent concepts and capabilities, filling gaps as we go.
+These core components, as well as many additional ones available in the Apache ecosystem, are all separate projects and therefore cross cutting concerns like authN, authZ, a consistent security policy framework, consistent authorization model and audit coverage loosely coordinated. Some security features expected by our customers, such as encryption, are simply missing. Our aim is to take a full stack view and work with the individual projects toward consistent concepts and capabilities, filling gaps as we go.
 
-#### Our initial goals are:
+#### Our goals are:
 
 ##### 1) Framework support for encryption and key management
 
@@ -26,7 +26,7 @@ There is currently no framework support for encryption or key management. We wil
 
 ##### 2) A common authorization framework for the Hadoop ecosystem
 
-Each component currently has its own authorization engine. We will abstract the common functions into a reusable authorization framework with a consistent interface. Where appropriate we will either modify an existing engine to work within this framework, or we will plug in a common default engine. Therefore we also must normalize how security policy is expressed and applied by each component. Core, HDFS, ZooKeeper, and HBase currently support simple access control lists (ACLs) composed of users and groups. We see this as a good starting point. Where necessary we will modify components so they each offer equivalent functionality, and build support into others.
+Each component currently has its own authorization engine. We abstract the common functions into a reusable authorization framework with a consistent interface. Where appropriate we either modify an existing engine to work within this framework, or we plug in a common default engine. Therefore we also must normalize how security policy is expressed and applied by each component. Core, HDFS, ZooKeeper, and HBase currently support access control lists (ACLs) composed of users and groups. Hive Server supports RBAC permissions set on the database, table or view level.  We see this as a good starting point; these different approaches need to be integrated so that a single normalized permissions policy can be in effect for the vast majority of data access paths.
 
 ##### 3) Token based authentication and single sign on
 
@@ -36,9 +36,17 @@ Core, HDFS, ZooKeeper, and HBase currently support Kerberos authentication at th
 
 Currently HBase supports setting access controls at the table or column family level. However, many use cases would benefit from the additional capability to do this on a per cell basis. In fact for many users dealing with sensitive information the ability to do this is crucial.
 
+##### UPDATE: This goal has been achieved with the availability of HBase 0.98.
+
 ##### 5) Improve audit logging
 
-Audit messages from various Hadoop components do not use a unified or even consistently formatted format. This makes analysis of logs for verifying compliance or taking corrective action difficult. We will build a common audit logging facility as part of the common authorization framework work. We will also build a set of common audit log processing tools for transforming them to different industry standard formats, for supporting compliance verification, and for triggering responses to policy violations.
+Audit messages from various Hadoop components do not use a unified or even consistently formatted format. This makes analysis of logs for verifying compliance or taking corrective action difficult. We will build a common audit logging facility. We will also build a set of common audit log processing tools for transforming them to different industry standard formats, for supporting compliance verification, and for triggering responses to policy violations.
+
+#### Apache Projects:
+
+##### sentry.incubator.apache.org: Apache Sentry (Incubating)
+
+Apache Sentry (incubating) is a modular system for providing fine-grained role based authorization to both data and metadata stored on an Apache Hadoop cluster. It currently works with Apache Hive.  In the future we plan to contribute changes to extend it, enforcing a common set of permissions over data accessed through additional components including HCatalog, MapReduce, Pig, YARN, Spark, Sqoop, and more.  Apache Sentry implements an authorization provider that can be plugged in to the unified authorization framework goal (above) and the associated jira (below).
 
 #### Current JIRAs:
 
@@ -100,15 +108,15 @@ There are use cases in Pig:
 A directory is used as the input of a load operation. It is possible that one or more files in that directory are bad files (for example, corrupted or bad data caused by compression).
 A directory is used as the input of a load operation. The current user may not have permission to access any subdirectories or files of that directory.
 The current Pig implementation will abort the whole Pig job for such cases. It would be useful to have option to allow the job to continue and ignore the bad files or inaccessible files/folders without abort the job, ideally, log or print a warning for such error or violations. This requirement is not trivial because for big data set for large analytics applications, this is not always possible to sort out the good data for processing; Ignore a few of bad files may be a better choice for such situations.
-We propose to use ¡°Ignore bad files¡± flag to address this problem. AvroStorage and related file format in Pig already has this flag but it is not complete to cover all the cases mentioned above. We would improve the PigStorage and related text format to support this new flag as well as improve AvroStorage and related facilities to completely support the concept.
-The flag is ¡°Storage¡± (For example, PigStorage or AvroStorage) based and can be set for each load operation respectively. The value of this flag will be false if it is not explicitly set. Ideally, we can provide a global pig parameter which forces the default value to true for all load functions even if it is not explicitly set in the LOAD statement.
+We propose to use "Ignore bad files" flag to address this problem. AvroStorage and related file format in Pig already has this flag but it is not complete to cover all the cases mentioned above. We would improve the PigStorage and related text format to support this new flag as well as improve AvroStorage and related facilities to completely support the concept.
+The flag is Storage based (For example, PigStorage or AvroStorage) and can be set for each load operation respectively. The value of this flag will be false if it is not explicitly set. Ideally, we can provide a global pig parameter which forces the default value to true for all load functions even if it is not explicitly set in the LOAD statement.
 
 [HIVE-5207: Support data encryption for Hive tables](https://issues.apache.org/jira/browse/HIVE-5207)
 
 For sensitive and legally protected data such as personal information, it is a common practice that the data is stored encrypted in the file system. To enable Hive with the ability to store and query the encrypted data is very crucial for Hive data analysis in enterprise. 
 When creating table, user can specify whether a table is an encrypted table or not by specify a property in TBLPROPERTIES. Once an encrypted table is created, query on the encrypted table is transparent as long as the corresponding key management facilities are set in the running environment of query. We can use hadoop crypto provided by HADOOP-9331 for underlying data encryption and decryption. 
 As to key management, we would support several common key management use cases. First, the table key (data key) can be stored in the Hive metastore associated with the table in properties. The table key can be explicit specified or auto generated and will be encrypted with a master key. There are cases that the data being processed is generated by other applications, we need to support externally managed or imported table keys. Also, the data generated by Hive may be consumed by other applications in the system. We need to a tool or command for exporting the table key to a java keystore for using externally.
-To handle versions of Hadoop that do not have crypto support, we can avoid compilation problems by segregating crypto API usage into separate files (shims) to be included only if a flag is defined on the Ant command line (something like ¨CDcrypto=true).
+To handle versions of Hadoop that do not have crypto support, we can avoid compilation problems by segregating crypto API usage into separate files (shims) to be included only if a flag is defined on the Ant command line (something like -Dcrypto=true).
 
 [AVRO-1371: Support of data encryption for Avro file](https://issues.apache.org/jira/browse/AVRO-1371)
 
