@@ -20,25 +20,30 @@ These core components, as well as many additional ones available in the Apache e
 
 #### Our goals are:
 
-##### 1) Framework support for encryption and key management
+##### 1) Enhance Hadoop ecosystem with data protection
 
 There is currently no framework support for encryption or key management. We will add this support into Hadoop Core and integrate it across the ecosystem. 
 
-##### 2) A common authorization framework for the Hadoop ecosystem
+##### 2) Drive the evolution of authorization for the Hadoop ecosystem
+
+###### a) Centralized authorization
 
 Each component currently has its own authorization engine. We abstract the common functions into a reusable authorization framework with a consistent interface. Where appropriate we either modify an existing engine to work within this framework, or we plug in a common default engine. Therefore we also must normalize how security policy is expressed and applied by each component. Core, HDFS, ZooKeeper, and HBase currently support access control lists (ACLs) composed of users and groups. Hive Server supports RBAC permissions set on the database, table or view level.  We see this as a good starting point; these different approaches need to be integrated so that a single normalized permissions policy can be in effect for the vast majority of data access paths.
 
-##### 3) Token based authentication and single sign on
+###### b) Extend HBase support for ACLs to the cell level
 
+Currently HBase supports setting access controls at the table or column family level. However, many use cases would benefit from the additional capability to do this on a per cell basis. In fact for many users dealing with sensitive information the ability to do this is crucial. (UPDATE: This goal has been achieved with the availability of HBase 0.98.)
+
+##### 3) Enhance Hadoop authentication mechanisms and drive to satisfy the new requirements
+
+###### a) Enhance the existing authentication mechanisms
+
+Kerberos is the de facto strong authentication mechanism adopted by Hadoop. While the support of Keberos is not quite complete for a lot of projects in Hadoop especially for the new and fast involving projects. We need to continues to drive the completeness so that Kerberos can be realized in a chain of depended components.
+
+###### b) Token based authentication and single sign on
 Core, HDFS, ZooKeeper, and HBase currently support Kerberos authentication at the RPC layer, via SASL. However this does not provide valuable attributes such as group membership, classification level, organizational identity, or support for user defined attributes. Hadoop components must interrogate external resources for discovering these attributes and at scale this is problematic. There is also no consistent delegation model. HDFS has a simple delegation capability, and only Oozie can take limited advantage of it. We will implement a common token based authentication framework to decouple internal user and service authentication from external mechanisms used to support it (like Kerberos). 
 
-##### 4) Extend HBase support for ACLs to the cell level
-
-Currently HBase supports setting access controls at the table or column family level. However, many use cases would benefit from the additional capability to do this on a per cell basis. In fact for many users dealing with sensitive information the ability to do this is crucial.
-
-##### UPDATE: This goal has been achieved with the availability of HBase 0.98.
-
-##### 5) Improve audit logging
+##### 4) Improve audit logging
 
 Audit messages from various Hadoop components do not use a unified or even consistently formatted format. This makes analysis of logs for verifying compliance or taking corrective action difficult. We will build a common audit logging facility. We will also build a set of common audit log processing tools for transforming them to different industry standard formats, for supporting compliance verification, and for triggering responses to policy violations.
 
