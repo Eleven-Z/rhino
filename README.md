@@ -73,6 +73,13 @@ High level requirements:
 
 As part of Cryptograhpic File System, we also contributed the framework for performaning encryption with AES CTR and also optimize it with Intel AES-NI.
 
+#####[HDFS-2006](https://issues.apache.org/jira/browse/HDFS-2006) - COMMITTED
+Ability to support storing extended attributes per file
+
+HDFS Extended Attribute is used to store additional information for HDFS inode, and contains user/trusted/system/security namespaces. 
+
+Extended Attribute is a common feature in traditional OS/FS, and lots of features are based on this feature.  Currently CFS is based on this feature. 
+
 #####[HBASE-7544](https://issues.apache.org/jira/browse/hbase-7544) - COMMITTED
 Transparent table/CF encryption
 
